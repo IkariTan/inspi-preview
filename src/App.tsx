@@ -98,7 +98,7 @@ export default function App() {
           ))}
         </ul>
       </div>
-      <div className="flex-grow h-full p-6 flex">
+      <div className="flex-grow h-full p-6 flex overflow-y-auto">
         <div className="mr-8">
           <img
             className="min-w-[500px] w-[500px] h-auto rounded-lg"
