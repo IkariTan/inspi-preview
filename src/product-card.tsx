@@ -15,7 +15,15 @@ export function ProductCard({ variant_handle }: { variant_handle: string }) {
   }, [variant_handle]);
 
   return (
-    <div className="w-full p-2">
+    <div
+      className="w-full p-2 cursor-pointer"
+      onClick={() => {
+        window.open(
+          `https://materialdepot.in/${variant_handle}/product`,
+          "_blank"
+        );
+      }}
+    >
       <img
         src={productData?.data?.variant_image?.[0]?.image_url}
         className="w-full h-auto object-contain rounded bg-gray-200"
