@@ -102,11 +102,11 @@ export default function App() {
         <div className="mr-8">
           <img
             className="min-w-[500px] w-[500px] h-auto rounded-lg"
-            src={formattedCSV[activeIndex].image_link}
+            src={formattedCSV[activeIndex]?.image_link}
           />
         </div>
         <div className="grid grid-cols-3 gap-4 mt-4 flex-grow">
-          {formattedCSV[activeIndex].variant_handles.map((handle, index) => (
+          {formattedCSV?.[activeIndex]?.variant_handles.map((handle, index) => (
             <ProductCard key={index} variant_handle={handle} />
           ))}
         </div>
