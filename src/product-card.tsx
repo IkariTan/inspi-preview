@@ -78,8 +78,9 @@ export function ProductCard({ variant_handle }: { variant_handle: string }) {
         style={{ aspectRatio: 0.75 }}
       />
       <div className="mt-2">
-        <div className="text-sm font-semibold">
-          {productData?.data?.category_name ?? productData?.data?.brand_name}
+        <div className="text-sm font-semibold flex justify-between">
+          <span>{productData?.data?.category_name}</span>
+          <span>{productData?.data?.brand_name}</span>
         </div>
         <div className="text-sm text-gray-500">
           {productData?.data?.product_name?.substring(0, 50)}...
