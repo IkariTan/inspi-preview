@@ -1,51 +1,18 @@
 import { useEffect, useState } from "react";
+import { Match } from "./App";
+import { getImageUrl } from "./utils";
 
-export function getImageUrl(path: string, width: string) {
-  let img_url: string = path?.replace(
-    "materialdepotimages.s3.ap-south-1.amazonaws.com",
-    "dpy2z8n9cxui1.cloudfront.net"
-    // `materialdepotimages-compressed-${percent}-percent`
-  );
-
-  img_url = img_url?.replaceAll(
-    "materialdepotimages.s3.amazonaws.com",
-    "dpy2z8n9cxui1.cloudfront.net"
-  );
-
-  img_url = img_url?.replaceAll(
-    "material-depot-content-files.s3.ap-south-1.amazonaws.com",
-    "dqzffhb3lxxp.cloudfront.net"
-  );
-
-  if (
-    img_url?.includes(".mp4") ||
-    img_url?.includes(".mov") ||
-    img_url?.includes(".gif")
-  ) {
-    img_url = img_url?.replaceAll(
-      "dpy2z8n9cxui1.cloudfront.net",
-      "d2cwt1uuomj2h5.cloudfront.net"
-    );
-  }
-
-  if (img_url) {
-    if (img_url[0] === "/") {
-      img_url = "https://dpy2z8n9cxui1.cloudfront.net" + img_url;
-    }
-  }
-
-  img_url = img_url?.replaceAll("+", "%20");
-  if (!img_url?.startsWith("https")) {
-    img_url = "https://dpy2z8n9cxui1.cloudfront.net" + img_url;
-  }
-  if (width !== "") {
-    img_url += "?width=" + width;
-  }
-
-  return img_url;
+export interface ProductCardProps {
+  variant_handle: string;
+  match: Match;
+  onMatchChange: (match: Match) => void;
 }
 
-export function ProductCard({ variant_handle }: { variant_handle: string }) {
+export function ProductCard({
+  variant_handle,
+  match,
+  onMatchChange,
+}: ProductCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [productData, setProductData] = useState<any | null>(null);
 
@@ -60,15 +27,7 @@ export function ProductCard({ variant_handle }: { variant_handle: string }) {
   }, [variant_handle]);
 
   return (
-    <div
-      className="w-full p-2 cursor-pointer"
-      onClick={() => {
-        window.open(
-          `https://materialdepot.in/${variant_handle}/product`,
-          "_blank"
-        );
-      }}
-    >
+    <div className="w-full p-2 cursor-pointer">
       <img
         src={getImageUrl(
           productData?.data?.variant_image?.[0]?.image_url,
@@ -76,6 +35,12 @@ export function ProductCard({ variant_handle }: { variant_handle: string }) {
         )}
         className="w-full h-auto object-contain rounded bg-gray-200"
         style={{ aspectRatio: 0.75 }}
+        onClick={() => {
+          window.open(
+            `https://materialdepot.in/${variant_handle}/product`,
+            "_blank"
+          );
+        }}
       />
       <div className="mt-2">
         <div className="text-sm font-semibold flex justify-between">
@@ -92,6 +57,16 @@ export function ProductCard({ variant_handle }: { variant_handle: string }) {
           <div className="text-sm">₹ {productData?.data?.mrp}</div>
         </div>
       </div>
+      <select
+        value={match}
+        onChange={(ev) => onMatchChange(ev.target.value as Match)}
+        className="mt-2 bg-orange-300 p-2 w-full rounded"
+      >
+        <option value="">Select Match</option>
+        <option value="exact">Exact</option>
+        <option value="similar">Similar</option>
+        <option value="not_related">Not Related</option>
+      </select>
     </div>
   );
 }

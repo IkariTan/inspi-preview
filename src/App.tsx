@@ -11,9 +11,14 @@ export interface CSVRow {
   url6?: string;
 }
 
+export type Match = "exact" | "likely" | "possible" | "";
+
 export interface WorkableData {
   image_link: string;
-  variant_handles: string[];
+  variant_handles: {
+    handle: string;
+    match: Match;
+  }[];
 }
 
 export default function App() {
@@ -43,7 +48,10 @@ export default function App() {
               const handle = url
                 .replace("https://materialdepot.in/", "")
                 .replace("/product", "");
-              return handle;
+              return {
+                handle,
+                match: "" as Match,
+              };
             }),
         };
       })
@@ -64,8 +72,45 @@ export default function App() {
     reader.readAsText(csvFile);
   }, [csvFile]);
 
+  const exportCSV = () => {
+    // Each row will have a single entry of the combination of Image URL, Variant Handle, and Match
+    // The first row will be the header
+    // The subsequent rows will be the data
+    const data = formattedCSV
+      .map(({ image_link, variant_handles }) =>
+        variant_handles.map(({ handle, match }) => ({
+          image_link,
+          handle,
+          match,
+        }))
+      )
+      .flat();
+
+    const csvContent = [
+      ["Image URL", "Variant Handle", "Match"].join(","),
+      ...data.map(({ image_link, handle, match }) =>
+        [image_link, handle, match].join(",")
+      ),
+    ].join("\r\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "output.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <section className="flex h-screen font-sans">
+      <button
+        className="bg-blue-500 text-white p-2 fixed bottom-2 right-2 rounded"
+        onClick={exportCSV}
+      >
+        Download
+      </button>
       <div
         className={`h-full w-[300px] min-w-[300px] bg-gray-100 overflow-y-auto overflow-x-hidden`}
       >
@@ -106,9 +151,21 @@ export default function App() {
           />
         </div>
         <div className="grid grid-cols-3 gap-4 mt-4 flex-grow">
-          {formattedCSV?.[activeIndex]?.variant_handles.map((handle, index) => (
-            <ProductCard key={index} variant_handle={handle} />
-          ))}
+          {formattedCSV?.[activeIndex]?.variant_handles.map(
+            ({ handle, match }, index) => (
+              <ProductCard
+                key={index}
+                variant_handle={handle}
+                match={match}
+                onMatchChange={(match: Match) => {
+                  const newFormattedCSV = [...formattedCSV];
+                  newFormattedCSV[activeIndex].variant_handles[index].match =
+                    match;
+                  setFormattedCSV(newFormattedCSV);
+                }}
+              />
+            )
+          )}
         </div>
       </div>
     </section>
