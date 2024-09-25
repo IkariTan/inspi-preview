@@ -64,8 +64,8 @@ export function ProductCard({
       >
         <option value="">Select Match</option>
         <option value="exact">Exact</option>
-        <option value="similar">Similar</option>
-        <option value="not_related">Not Related</option>
+        <option value="closest">Closest</option>
+        <option value="similar_vibe">Similar Vibe</option>
       </select>
     </div>
   );

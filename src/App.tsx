@@ -11,7 +11,7 @@ export interface CSVRow {
   url6?: string;
 }
 
-export type Match = "exact" | "likely" | "possible" | "";
+export type Match = "exact" | "closest" | "similar_vibe" | "";
 
 export interface WorkableData {
   image_link: string;
